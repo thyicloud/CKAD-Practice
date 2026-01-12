@@ -1,0 +1,11 @@
+
+{
+  "name": "CKAD Practice",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "kubectl": "latest",
+    "kind": "latest"
+  },
+  "postCreateCommand": "kind create cluster"
+}
+``
