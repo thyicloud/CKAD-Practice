@@ -1,11 +1,58 @@
 
 {
   "name": "CKAD Practice",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "features": {
-    "kubectl": "latest",
-    "kind": "latest"
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".",
+    "args": {
+      // Adjust if you want different versions
+      "KUBECTL_VERSION": "v1.29.6",
+      "KIND_VERSION": "v0.23.0",
+      "HELM_VERSION": "v3.14.4",
+      "K9S_VERSION": "v0.32.5",
+      "YQ_VERSION": "v4.44.3",
+      "STERN_VERSION": "v1.30.0"
+    }
   },
-  "postCreateCommand": "kind create cluster"
+  "postCreateCommand": "bash /workspaces/$(basename $GITHUB_REPOSITORY)/.devcontainer/postCreate.sh",
+  "forwardPorts": [30080, 30081],
+  "portsAttributes": {
+    "30080": { "label": "NodePort 30080" },
+    "30081": { "label": "NodePort 30081" }
+  },
+  "remoteUser": "vscode",
+  "containerUser": "vscode",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker",
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        "ms-vscode.makefile-tools",
+        "oderwat.indent-rainbow"
+      ],
+      "settings": {
+        "yaml.schemas": {
+          "kubernetes": "*.yaml"
+        },
+        "editor.formatOnSave": true,
+        "files.trimTrailingWhitespace": true,
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "containerEnv": {
+    "KUBECONFIG": "/home/vscode/.kube/config"
+  },
+  "mounts": [
+    "source=/var/lib/docker,target=/var/lib/docker,type=bind,consistency=cached"
+  ],
+  "runArgs": [
+    "--privileged" // required for kind's nested container runtime
+  ],
+  "updateContentCommand": ""
 }
-``
